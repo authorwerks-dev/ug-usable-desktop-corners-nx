@@ -1,4 +1,6 @@
-# Panel corners
+# UG Usable Desktop Corners NX
+
+This fork rounds the corners of the *usable desktop space* (the monitor's work area, excluding the top panel and any always-visible dock) instead of the physical screen/panel edges. For example, with a dock fixed on the left, the left corners are drawn just to the right of the dock.
 
 [<img src="https://github.com/aunetx/files_utils/raw/master/get_it_on_gnome_extensions.png" height="100" align="right">](https://extensions.gnome.org/extension/4805/panel-corners/)
 
@@ -7,7 +9,7 @@ A GNOME shell extension to keep the old topbar corners, which were removed for G
 - if your GNOME shell theme still supports rounded corners (which is the case for Adwaita until GNOME 42), then this extension will provide them.
 - else, this extension will provide them, and manage automatically the corners settings: the radius, background-color, ... which are normally set by the theme are then managed by the extension directly.
 
-If your theme supports panel corners but you want to customize them anyway, you can set the setting `force-extension-values` to `true` (see [Customization](https://github.com/aunetx/panel-corners/edit/master/README.md#Customization)).
+If your theme supports panel corners but you want to customize them anyway, you can set the setting `force-extension-values` to `true` (see [Customization](https://github.com/liamhatherton/ug-usable-desktop-corners-nx/blob/master/README.md#Customization)).
 
 
 A very big part of the code is directly ported from the [official GNOME shell repository](https://gitlab.gnome.org/GNOME/gnome-shell), so the immense majority of the work was done by various gnome contributors. All this extension does is integrate the previous code as an extension, provide some configuration options and make all of this compatible for GNOME 42 and later.
@@ -41,10 +43,10 @@ GUI preferences should come soon, you can use dconf/gsettings to change extensio
 make build
 
 # then change any preference
-gsettings --schemadir=build/schemas set org.gnome.shell.extensions.panel-corners preference value
+gsettings --schemadir=build/schemas set org.gnome.shell.extensions.ug-usable-desktop-corners-nx preference value
 ```
 
-You can see available preferences in `schemas/org.gnome.shell.extensions.panel-corners.gschemas.xml`.
+You can see available preferences in `schemas/org.gnome.shell.extensions.ug-usable-desktop-corners-nx.gschemas.xml`.
 
 ## Versions support
 

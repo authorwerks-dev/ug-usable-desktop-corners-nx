@@ -2,7 +2,7 @@ import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 import Cogl from 'gi://Cogl';
 
-export function lookup_for_length(node, prop, settings) {
+export function lookup_for_length(node, prop, settings, key = prop.slice(1)) {
     const use_extension_values = node && settings.FORCE_EXTENSION_VALUES.get();
 
     let lookup = [];
@@ -12,7 +12,7 @@ export function lookup_for_length(node, prop, settings) {
     if (use_extension_values || !lookup[0]) {
         let scale_factor =
             St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let length = settings.get_property(prop.slice(1)).get();
+        let length = settings.get_property(key).get();
 
         return length * scale_factor;
     } else {

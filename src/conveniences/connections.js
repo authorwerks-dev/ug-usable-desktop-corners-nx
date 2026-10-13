@@ -101,6 +101,6 @@ export class Connections {
     }
 
     #warn(str) {
-        console.warn(`[Panel corners] ${str}`);
+        console.warn(`[UG Usable Desktop Corners NX] ${str}`);
     }
 }

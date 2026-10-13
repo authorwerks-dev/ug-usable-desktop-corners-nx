@@ -8,6 +8,8 @@ import { PanelCorners } from './panel_corner.js';
 import { ScreenCorners } from './screen_corner.js';
 
 const Keys = ([
+    { type: Type.I, name: "corner-radius" },
+
     { type: Type.B, name: "panel-corners" },
     { type: Type.I, name: "panel-corner-radius" },
     { type: Type.I, name: "panel-corner-border-width" },
@@ -76,6 +78,9 @@ export default class PanelCornersExtension extends Extension {
         // changed
         this.#settings.PANEL_CORNERS.changed(() => {
             this.create_panel_corners();
+            // screen corners skip the top of the primary monitor when panel
+            // corners are enabled, so they need to be rebuilt too
+            this.create_screen_corners();
             this.update();
         });
 
@@ -153,6 +158,6 @@ export default class PanelCornersExtension extends Extension {
 
     #log(str) {
         if (this.#settings.DEBUG.get())
-            console.log(`[Panel corners] ${str}`);
+            console.log(`[UG Usable Desktop Corners NX] ${str}`);
     }
 }

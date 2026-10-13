@@ -10,6 +10,8 @@ import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/
 import { Settings, Type } from './conveniences/settings.js';
 
 const Keys = ([
+    { type: Type.I, name: "corner-radius" },
+
     { type: Type.B, name: "panel-corners" },
     { type: Type.I, name: "panel-corner-radius" },
     { type: Type.I, name: "panel-corner-border-width" },
@@ -44,14 +46,15 @@ class MainPage extends (Adw.PreferencesPage) {
             GTypeName: 'MainPage',
             Template: GLib.uri_resolve_relative(import.meta.url, './ui/main_page.ui', GLib.UriFlags.NONE),
             InternalChildren: [
+                'corner_radius_adjustment',
+                'corner_radius_reset',
+
                 'panel_corners',
                 'panel_corner_color',
-                'panel_radius_adjustment',
                 'panel_opacity_adjustment',
 
                 'screen_corners',
                 'screen_corner_color',
-                'screen_radius_adjustment',
                 'screen_opacity_adjustment',
 
                 'force_extension_values',
@@ -69,9 +72,23 @@ class MainPage extends (Adw.PreferencesPage) {
     #initPreferences(preferences) {
         this.preferences = preferences;
 
+        // Corner radius, shared by every corner, with a reset button that is
+        // only active when the value differs from the default
+        this.preferences.settings.bind('corner-radius', this._corner_radius_adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+        const update_reset = () => {
+            const settings = this.preferences.settings;
+            const value = settings.get_value('corner-radius');
+            const default_value = settings.get_default_value('corner-radius');
+            this._corner_radius_reset.sensitive = !value.equal(default_value);
+        };
+        this.preferences.CORNER_RADIUS.changed(update_reset);
+        this._corner_radius_reset.connect('clicked', () => {
+            this.preferences.settings.reset('corner-radius');
+        });
+        update_reset();
+
         // Panel corners
         this.preferences.settings.bind('panel-corners', this._panel_corners, 'state', Gio.SettingsBindFlags.DEFAULT);
-        this.preferences.settings.bind('panel-corner-radius', this._panel_radius_adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.settings.bind(
             'panel-corner-opacity',
             this._panel_opacity_adjustment,
@@ -89,7 +106,6 @@ class MainPage extends (Adw.PreferencesPage) {
 
         // Screen corners
         this.preferences.settings.bind('screen-corners', this._screen_corners, 'state', Gio.SettingsBindFlags.DEFAULT);
-        this.preferences.settings.bind('screen-corner-radius', this._screen_radius_adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.settings.bind('screen-corner-opacity', this._screen_opacity_adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.SCREEN_CORNER_BACKGROUND_COLOR.changed(_ => {
             parse_color_from_setting(this.preferences.SCREEN_CORNER_BACKGROUND_COLOR, this._screen_corner_color);

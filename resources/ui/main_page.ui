@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="panel-corners@aunetx">
+<interface domain="ug-usable-desktop-corners-nx@liamhatherton">
   <template class="MainPage" parent="AdwPreferencesPage">
     <property name="name">main_page</property>
     <property name="title" translatable="yes">Main page</property>
+
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Corners</property>
+        <property name="description" translatable="yes">Rounds the corners of the usable desktop space.</property>
+
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Radius</property>
+            <property name="subtitle" translatable="yes">Size of every rounded corner, in pixels. Default is 12 px, to integrate with applications.</property>
+            <property name="activatable-widget">corner_radius</property>
+            <child>
+              <object class="GtkSpinButton" id="corner_radius">
+                <property name="valign">center</property>
+                <property name="orientation">horizontal</property>
+                <property name="numeric">True</property>
+                <property name="adjustment">corner_radius_adjustment</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="corner_radius_reset">
+                <property name="valign">center</property>
+                <property name="icon-name">edit-undo-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Reset to default</property>
+                <style>
+                  <class name="flat" />
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
 
     <child>
       <object class="AdwPreferencesGroup">
@@ -13,22 +46,6 @@
           </object>
         </property>
 
-        <child>
-          <object class="AdwActionRow">
-            <property name="title" translatable="yes">Radius</property>
-            <property name="subtitle" translatable="yes">Recommended size is 12 px, to integrate with applications.</property>
-            <property name="activatable-widget">panel_corner_radius</property>
-            <property name="sensitive" bind-source="panel_corners" bind-property="state" bind-flags="sync-create" />
-            <child>
-              <object class="GtkSpinButton" id="panel_corner_radius">
-                <property name="valign">center</property>
-                <property name="orientation">horizontal</property>
-                <property name="numeric">True</property>
-                <property name="adjustment">panel_radius_adjustment</property>
-              </object>
-            </child>
-          </object>
-        </child>
 
         <child>
           <object class="AdwActionRow">
@@ -76,22 +93,6 @@
           </object>
         </property>
 
-        <child>
-          <object class="AdwActionRow">
-            <property name="title" translatable="yes">Radius</property>
-            <property name="subtitle" translatable="yes">Recommended size is 12 px, to integrate with applications.</property>
-            <property name="activatable-widget">screen_corner_radius</property>
-            <property name="sensitive" bind-source="screen_corners" bind-property="state" bind-flags="sync-create" />
-            <child>
-              <object class="GtkSpinButton" id="screen_corner_radius">
-                <property name="valign">center</property>
-                <property name="orientation">horizontal</property>
-                <property name="numeric">True</property>
-                <property name="adjustment">screen_radius_adjustment</property>
-              </object>
-            </child>
-          </object>
-        </child>
 
         <child>
           <object class="AdwActionRow">
@@ -163,22 +164,17 @@
     </child>
   </template>
 
-  <object class="GtkAdjustment" id="panel_radius_adjustment">
+  <object class="GtkAdjustment" id="corner_radius_adjustment">
     <property name="lower">0</property>
-    <property name="upper">25</property>
+    <property name="upper">64</property>
     <property name="step-increment">1</property>
+    <property name="page-increment">4</property>
   </object>
 
   <object class="GtkAdjustment" id="panel_opacity_adjustment">
     <property name="lower">0.0</property>
     <property name="upper">1.0</property>
     <property name="step-increment">0.1</property>
-  </object>
-
-  <object class="GtkAdjustment" id="screen_radius_adjustment">
-    <property name="lower">0</property>
-    <property name="upper">25</property>
-    <property name="step-increment">1</property>
   </object>
 
   <object class="GtkAdjustment" id="screen_opacity_adjustment">

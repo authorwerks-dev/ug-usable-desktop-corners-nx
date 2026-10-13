@@ -1,5 +1,5 @@
-NAME = panel-corners
-UUID = $(NAME)@aunetx
+NAME = ug-usable-desktop-corners-nx
+UUID = $(NAME)@liamhatherton
 
 
 .PHONY: build install pot test-shell test-prefs remove clean

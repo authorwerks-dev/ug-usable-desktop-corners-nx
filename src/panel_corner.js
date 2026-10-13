@@ -5,6 +5,7 @@ import Cairo from 'cairo';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Utils from './utils.js';
+import { get_work_area } from './screen_corner.js';
 import { ANIMATION_TIME } from 'resource:///org/gnome/shell/ui/overview.js';
 
 const SYNC_CREATE = GObject.BindingFlags.SYNC_CREATE;
@@ -113,7 +114,7 @@ export class PanelCorners {
 
     #log(str) {
         if (this.#settings.DEBUG.get())
-            console.log(`[Panel corners] ${str}`);
+            console.log(`[UG Usable Desktop Corners NX] ${str}`);
     }
 }
 
@@ -167,17 +168,39 @@ export class PanelCorner extends St.DrawingArea {
         let allocWidth = Main.panel.width;
         let allocHeight = Main.panel.height;
 
+        // place the corners at the edges of the usable desktop space (work
+        // area) of the primary monitor instead of the edges of the panel, so
+        // that e.g. a dock always visible on the left pushes the left corner
+        // to its right
+        let left = 0;
+        let right = allocWidth;
+        let monitor = Main.layoutManager.primaryMonitor;
+        if (monitor) {
+            let area = get_work_area(monitor);
+            // the panel box spans the primary monitor; the corners are
+            // allocated relative to the panel itself
+            let panel_x = Main.layoutManager.panelBox.x + Main.panel.x;
+            if (!Number.isFinite(panel_x))
+                panel_x = monitor.x;
+            left = Math.max(0, area.x - panel_x);
+            right = Math.min(allocWidth, area.x + area.width - panel_x);
+            if (right <= left) {
+                left = 0;
+                right = allocWidth;
+            }
+        }
+
         switch (this.#side) {
             case St.Side.LEFT:
-                childBox.x1 = 0;
-                childBox.x2 = cornerWidth;
+                childBox.x1 = left;
+                childBox.x2 = left + cornerWidth;
                 childBox.y1 = allocHeight;
                 childBox.y2 = allocHeight + cornerHeight;
                 break;
 
             case St.Side.RIGHT:
-                childBox.x1 = allocWidth - cornerWidth;
-                childBox.x2 = allocWidth;
+                childBox.x1 = right - cornerWidth;
+                childBox.x2 = right;
                 childBox.y1 = allocHeight;
                 childBox.y2 = allocHeight + cornerHeight;
                 break;
@@ -189,7 +212,7 @@ export class PanelCorner extends St.DrawingArea {
     vfunc_repaint() {
         let node = this.get_theme_node();
 
-        let cornerRadius = Utils.lookup_for_length(node, '-panel-corner-radius', this.#settings);
+        let cornerRadius = Utils.lookup_for_length(node, '-panel-corner-radius', this.#settings, 'corner-radius');
         let borderWidth = Utils.lookup_for_length(node, '-panel-corner-border-width', this.#settings);
 
         let backgroundColor = Utils.lookup_for_color(node, '-panel-corner-background-color', this.#settings);
@@ -220,18 +243,14 @@ export class PanelCorner extends St.DrawingArea {
         super.vfunc_style_changed();
         let node = this.get_theme_node();
 
-        let cornerRadius = Utils.lookup_for_length(node, '-panel-corner-radius', this.#settings);
+        let cornerRadius = Utils.lookup_for_length(node, '-panel-corner-radius', this.#settings, 'corner-radius');
         let borderWidth = Utils.lookup_for_length(node, '-panel-corner-border-width', this.#settings);
 
         let opacity = Utils.lookup_for_double(node, '-panel-corner-opacity', this.#settings);
 
-        // if using extension values and in overview, set transparent
-        if (
-            this.#settings.FORCE_EXTENSION_VALUES.get() &&
-            Main.panel.get_style_pseudo_class() &&
-            Main.panel.get_style_pseudo_class().includes('overview')
-        )
-            opacity = 0.;
+        // the corners round the usable desktop space, which still exists in
+        // the overview (between the panel and the dock), so they are kept
+        // visible there instead of being faded out
 
         this.#update_allocation();
         this.set_size(cornerRadius, borderWidth + cornerRadius);
@@ -247,6 +266,6 @@ export class PanelCorner extends St.DrawingArea {
 
     #log(str) {
         if (this.#settings.DEBUG.get())
-            console.log(`[Panel corners] ${str}`);
+            console.log(`[UG Usable Desktop Corners NX] ${str}`);
     }
 }

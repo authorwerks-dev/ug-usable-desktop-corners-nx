@@ -13,6 +13,21 @@ const CornersList = [
 ];
 
 
+/**
+ * Returns the usable desktop space (work area) of the given monitor, that is
+ * the monitor geometry minus the struts reserved by the panel, docks, etc.
+ * Falls back to the monitor geometry if the work area cannot be computed.
+ */
+export function get_work_area(monitor) {
+    try {
+        let area = Main.layoutManager.getWorkAreaForMonitor(monitor.index);
+        if (area && area.width > 0 && area.height > 0)
+            return { x: area.x, y: area.y, width: area.width, height: area.height };
+    } catch (e) { }
+
+    return { x: monitor.x, y: monitor.y, width: monitor.width, height: monitor.height };
+}
+
 export class ScreenCorners {
     #settings;
     #connections;
@@ -35,11 +50,29 @@ export class ScreenCorners {
         // remove old corners if they exist
         this.remove();
 
-        // build new corners
+        // when panel corners are enabled, they already round the top of the
+        // usable desktop space on the primary monitor (right under the panel),
+        // so we do not draw screen corners on top of them
+        const panel_handles_top =
+            this.#settings.PANEL_CORNERS.get() && Main.panel.visible;
+
+        // build new corners, following the usable desktop space (work area)
+        // of each monitor: this excludes the top panel and any always-visible
+        // dock, the same space used to center windows and the clock
         for (let monitor of layoutManager.monitors) {
+            let work_area = get_work_area(monitor);
+
             for (let corner of CornersList) {
+                if (
+                    panel_handles_top &&
+                    monitor === layoutManager.primaryMonitor &&
+                    (corner === Meta.DisplayCorner.TOPLEFT ||
+                        corner === Meta.DisplayCorner.TOPRIGHT)
+                )
+                    continue;
+
                 // create the new corner actor
-                var actor = new ScreenCorner(corner, monitor, this.#settings);
+                var actor = new ScreenCorner(corner, work_area, this.#settings);
 
                 // insert it, shows the corner
                 layoutManager.addTopChrome(actor, { trackFullscreen: true });
@@ -83,7 +116,7 @@ export class ScreenCorners {
 
     #log(str) {
         if (this.#settings.DEBUG.get())
-            console.log(`[Panel corners] ${str}`);
+            console.log(`[UG Usable Desktop Corners NX] ${str}`);
     }
 };
 
@@ -94,54 +127,54 @@ export class ScreenCorner extends St.DrawingArea {
 
     #corner;
     #settings;
-    #monitor;
+    #area;
 
-    constructor(corner, monitor, settings) {
+    constructor(corner, area, settings) {
         super({ style_class: 'screen-corner' });
 
         this.#corner = corner;
         this.#settings = settings;
-        this.#monitor = monitor;
+        this.#area = area;
 
         this.#update_allocation();
     }
 
     #update_allocation() {
-        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings);
+        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings, 'corner-radius');
 
         switch (this.#corner) {
             case Meta.DisplayCorner.TOPLEFT:
                 this.set_position(
-                    this.#monitor.x,
-                    this.#monitor.y
+                    this.#area.x,
+                    this.#area.y
                 );
                 break;
 
             case Meta.DisplayCorner.TOPRIGHT:
                 this.set_position(
-                    this.#monitor.x + this.#monitor.width - cornerRadius,
-                    this.#monitor.y
+                    this.#area.x + this.#area.width - cornerRadius,
+                    this.#area.y
                 );
                 break;
 
             case Meta.DisplayCorner.BOTTOMLEFT:
                 this.set_position(
-                    this.#monitor.x,
-                    this.#monitor.y + this.#monitor.height - cornerRadius
+                    this.#area.x,
+                    this.#area.y + this.#area.height - cornerRadius
                 );
                 break;
 
             case Meta.DisplayCorner.BOTTOMRIGHT:
                 this.set_position(
-                    this.#monitor.x + this.#monitor.width - cornerRadius,
-                    this.#monitor.y + this.#monitor.height - cornerRadius
+                    this.#area.x + this.#area.width - cornerRadius,
+                    this.#area.y + this.#area.height - cornerRadius
                 );
                 break;
         }
     }
 
     vfunc_repaint() {
-        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings);
+        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings, 'corner-radius');
         let backgroundColor = Utils.lookup_for_color(null, '-screen-corner-background-color', this.#settings);
 
         let cr = this.get_context();
@@ -184,7 +217,7 @@ export class ScreenCorner extends St.DrawingArea {
     vfunc_style_changed() {
         super.vfunc_style_changed();
 
-        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings);
+        let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings, 'corner-radius');
         let opacity = Utils.lookup_for_double(null, '-screen-corner-opacity', this.#settings);
 
         this.set_opacity(opacity * 255);
