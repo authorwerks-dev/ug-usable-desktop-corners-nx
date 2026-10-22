@@ -48,14 +48,23 @@
 
 
         <child>
+          <object class="AdwSwitchRow" id="panel_corner_match_panel_color">
+            <property name="title" translatable="yes">Match top bar color</property>
+            <property name="subtitle" translatable="yes">Follow the top bar's background color as it changes.</property>
+            <property name="sensitive" bind-source="panel_corners" bind-property="state" bind-flags="sync-create" />
+          </object>
+        </child>
+
+        <child>
           <object class="AdwActionRow">
             <property name="title" translatable="yes">Color</property>
-            <property name="subtitle" translatable="yes">Changes the color of corners, black is recommended.</property>
+            <property name="subtitle" translatable="yes">Used when not matching the top bar. Black is recommended.</property>
             <property name="activatable-widget">panel_corner_color</property>
             <property name="sensitive" bind-source="panel_corners" bind-property="state" bind-flags="sync-create" />
             <child>
               <object class="GtkColorButton" id="panel_corner_color">
                 <property name="valign">center</property>
+                <property name="sensitive" bind-source="panel_corner_match_panel_color" bind-property="active" bind-flags="sync-create|invert-boolean" />
                 <property name="title">Corner color</property>
                 <property name="show-editor">True</property>
                 <property name="use-alpha">False</property>
@@ -95,14 +104,23 @@
 
 
         <child>
+          <object class="AdwSwitchRow" id="screen_corner_match_panel_color">
+            <property name="title" translatable="yes">Match top bar color</property>
+            <property name="subtitle" translatable="yes">Follow the top bar's background color as it changes.</property>
+            <property name="sensitive" bind-source="screen_corners" bind-property="state" bind-flags="sync-create" />
+          </object>
+        </child>
+
+        <child>
           <object class="AdwActionRow">
             <property name="title" translatable="yes">Color</property>
-            <property name="subtitle" translatable="yes">Changes the color of corners, black is recommended.</property>
+            <property name="subtitle" translatable="yes">Used when not matching the top bar. Black is recommended.</property>
             <property name="activatable-widget">screen_corner_color</property>
             <property name="sensitive" bind-source="screen_corners" bind-property="state" bind-flags="sync-create" />
             <child>
               <object class="GtkColorButton" id="screen_corner_color">
                 <property name="valign">center</property>
+                <property name="sensitive" bind-source="screen_corner_match_panel_color" bind-property="active" bind-flags="sync-create|invert-boolean" />
                 <property name="title">Corner color</property>
                 <property name="show-editor">True</property>
                 <property name="use-alpha">False</property>

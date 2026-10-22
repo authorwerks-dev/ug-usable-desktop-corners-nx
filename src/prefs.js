@@ -15,11 +15,13 @@ const Keys = ([
     { type: Type.B, name: "panel-corners" },
     { type: Type.I, name: "panel-corner-radius" },
     { type: Type.I, name: "panel-corner-border-width" },
+    { type: Type.B, name: "panel-corner-match-panel-color" },
     { type: Type.S, name: "panel-corner-background-color" },
     { type: Type.D, name: "panel-corner-opacity" },
 
     { type: Type.B, name: "screen-corners" },
     { type: Type.I, name: "screen-corner-radius" },
+    { type: Type.B, name: "screen-corner-match-panel-color" },
     { type: Type.S, name: "screen-corner-background-color" },
     { type: Type.D, name: "screen-corner-opacity" },
 
@@ -50,10 +52,12 @@ class MainPage extends (Adw.PreferencesPage) {
                 'corner_radius_reset',
 
                 'panel_corners',
+                'panel_corner_match_panel_color',
                 'panel_corner_color',
                 'panel_opacity_adjustment',
 
                 'screen_corners',
+                'screen_corner_match_panel_color',
                 'screen_corner_color',
                 'screen_opacity_adjustment',
 
@@ -89,6 +93,7 @@ class MainPage extends (Adw.PreferencesPage) {
 
         // Panel corners
         this.preferences.settings.bind('panel-corners', this._panel_corners, 'state', Gio.SettingsBindFlags.DEFAULT);
+        this.preferences.settings.bind('panel-corner-match-panel-color', this._panel_corner_match_panel_color, 'active', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.settings.bind(
             'panel-corner-opacity',
             this._panel_opacity_adjustment,
@@ -106,6 +111,7 @@ class MainPage extends (Adw.PreferencesPage) {
 
         // Screen corners
         this.preferences.settings.bind('screen-corners', this._screen_corners, 'state', Gio.SettingsBindFlags.DEFAULT);
+        this.preferences.settings.bind('screen-corner-match-panel-color', this._screen_corner_match_panel_color, 'active', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.settings.bind('screen-corner-opacity', this._screen_opacity_adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
         this.preferences.SCREEN_CORNER_BACKGROUND_COLOR.changed(_ => {
             parse_color_from_setting(this.preferences.SCREEN_CORNER_BACKGROUND_COLOR, this._screen_corner_color);

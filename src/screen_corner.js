@@ -90,6 +90,14 @@ export class ScreenCorners {
                         actor.vfunc_style_changed.bind(actor)
                     );
                 });
+
+                // repaint when the top bar's style changes, so the corner
+                // follows its background colour dynamically
+                this.#connections.connect(
+                    Main.panel,
+                    'style-changed',
+                    () => actor.queue_repaint()
+                );
             }
         }
         this.#log("corners updated.");
@@ -175,7 +183,7 @@ export class ScreenCorner extends St.DrawingArea {
 
     vfunc_repaint() {
         let cornerRadius = Utils.lookup_for_length(null, '-screen-corner-radius', this.#settings, 'corner-radius');
-        let backgroundColor = Utils.lookup_for_color(null, '-screen-corner-background-color', this.#settings);
+        let backgroundColor = Utils.corner_color(null, '-screen-corner-background-color', this.#settings, 'screen-corner-match-panel-color');
 
         let cr = this.get_context();
         cr.setOperator(Cairo.Operator.SOURCE);

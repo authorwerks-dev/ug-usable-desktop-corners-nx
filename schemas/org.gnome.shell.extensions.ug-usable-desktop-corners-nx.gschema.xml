@@ -31,6 +31,13 @@
             <description />
         </key>
 
+        <!-- PANEL CORNER MATCH PANEL COLOR -->
+        <key type="b" name="panel-corner-match-panel-color">
+            <default>true</default>
+            <summary>Use the top bar's background color for the panel corners</summary>
+            <description>Follow the top bar's current background color (it changes with the theme, light/dark style, overview, etc.) instead of panel-corner-background-color.</description>
+        </key>
+
         <!-- PANEL CORNER BACKGROUND COLOR -->
         <key type="s" name="panel-corner-background-color">
             <default>"#000000ff"</default>
@@ -57,6 +64,13 @@
             <default>12</default>
             <summary>Deprecated, replaced by corner-radius</summary>
             <description />
+        </key>
+
+        <!-- SCREEN CORNER MATCH PANEL COLOR -->
+        <key type="b" name="screen-corner-match-panel-color">
+            <default>true</default>
+            <summary>Use the top bar's background color for the screen corners</summary>
+            <description>Follow the top bar's current background color instead of screen-corner-background-color.</description>
         </key>
 
         <!-- SCREEN CORNER BACKGROUND COLOR -->

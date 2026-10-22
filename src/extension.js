@@ -6,6 +6,7 @@ import { Settings, Type } from './conveniences/settings.js';
 
 import { PanelCorners } from './panel_corner.js';
 import { ScreenCorners } from './screen_corner.js';
+import { reset_panel_color_cache } from './utils.js';
 
 const Keys = ([
     { type: Type.I, name: "corner-radius" },
@@ -13,11 +14,13 @@ const Keys = ([
     { type: Type.B, name: "panel-corners" },
     { type: Type.I, name: "panel-corner-radius" },
     { type: Type.I, name: "panel-corner-border-width" },
+    { type: Type.B, name: "panel-corner-match-panel-color" },
     { type: Type.S, name: "panel-corner-background-color" },
     { type: Type.D, name: "panel-corner-opacity" },
 
     { type: Type.B, name: "screen-corners" },
     { type: Type.I, name: "screen-corner-radius" },
+    { type: Type.B, name: "screen-corner-match-panel-color" },
     { type: Type.S, name: "screen-corner-background-color" },
     { type: Type.D, name: "screen-corner-opacity" },
 
@@ -149,6 +152,7 @@ export default class PanelCornersExtension extends Extension {
     disable() {
         this.remove();
         this.#connections.disconnect_all();
+        reset_panel_color_cache();
         this.#log("extension disabled.");
         this.#panel_corners = null;
         this.#screen_corners = null;

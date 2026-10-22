@@ -70,6 +70,14 @@ export class PanelCorners {
                 corner.vfunc_style_changed.bind(corner)
             );
         });
+
+        // repaint when the top bar's style changes, so the corner follows its
+        // background colour dynamically
+        this.#connections.connect(
+            Main.panel,
+            'style-changed',
+            () => corner.queue_repaint()
+        );
     }
 
     /**
@@ -215,7 +223,7 @@ export class PanelCorner extends St.DrawingArea {
         let cornerRadius = Utils.lookup_for_length(node, '-panel-corner-radius', this.#settings, 'corner-radius');
         let borderWidth = Utils.lookup_for_length(node, '-panel-corner-border-width', this.#settings);
 
-        let backgroundColor = Utils.lookup_for_color(node, '-panel-corner-background-color', this.#settings);
+        let backgroundColor = Utils.corner_color(node, '-panel-corner-background-color', this.#settings, 'panel-corner-match-panel-color');
 
         let cr = this.get_context();
         cr.setOperator(Cairo.Operator.SOURCE);

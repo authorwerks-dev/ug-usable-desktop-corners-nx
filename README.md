@@ -62,6 +62,12 @@ make remove
 
 ## Customization
 
+By default the corners take the top bar's background color and follow it as it
+changes (theme, light/dark style, lock screen). On Ubuntu they always stay
+visible in the overview, keeping the top bar's color from outside it. Turn off
+"Match top bar color" for the panel or screen corners to use a fixed color
+instead.
+
 Most options are in the preferences window. Every setting can also be changed
 with gsettings once the extension is installed:
 
