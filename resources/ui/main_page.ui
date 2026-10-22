@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="ug-usable-desktop-corners-nx@liamhatherton">
+<interface domain="ug-usable-desktop-corners-nx@authorwerks-dev">
   <template class="MainPage" parent="AdwPreferencesPage">
     <property name="name">main_page</property>
     <property name="title" translatable="yes">Main page</property>

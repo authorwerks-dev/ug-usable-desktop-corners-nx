@@ -1,5 +1,5 @@
 NAME = ug-usable-desktop-corners-nx
-UUID = $(NAME)@liamhatherton
+UUID = $(NAME)@authorwerks-dev
 
 
 .PHONY: build install pot test-shell test-prefs remove clean

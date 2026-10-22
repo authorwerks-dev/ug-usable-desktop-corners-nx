@@ -9,7 +9,7 @@ A GNOME shell extension to keep the old topbar corners, which were removed for G
 - if your GNOME shell theme still supports rounded corners (which is the case for Adwaita until GNOME 42), then this extension will provide them.
 - else, this extension will provide them, and manage automatically the corners settings: the radius, background-color, ... which are normally set by the theme are then managed by the extension directly.
 
-If your theme supports panel corners but you want to customize them anyway, you can set the setting `force-extension-values` to `true` (see [Customization](https://github.com/liamhatherton/ug-usable-desktop-corners-nx/blob/master/README.md#Customization)).
+If your theme supports panel corners but you want to customize them anyway, you can set the setting `force-extension-values` to `true` (see [Customization](https://github.com/authorwerks-dev/ug-usable-desktop-corners-nx/blob/master/README.md#Customization)).
 
 
 A very big part of the code is directly ported from the [official GNOME shell repository](https://gitlab.gnome.org/GNOME/gnome-shell), so the immense majority of the work was done by various gnome contributors. All this extension does is integrate the previous code as an extension, provide some configuration options and make all of this compatible for GNOME 42 and later.
@@ -18,35 +18,59 @@ The bottom corners code is directly ported from [this merge request by Alice Mik
 
 ## Installation
 
-The extension is available on [extensions.gnome.org](https://extensions.gnome.org/extension/4805/panel-corners/).
+This fork is not on extensions.gnome.org (the link above is the upstream
+Panel Corners extension), so install it from source.
 
-Otherwise, you can install the extension locally with:
+### Requirements
+
+`make`, `gettext` (to compile the translations), plus the `gnome-extensions`
+and `glib-compile-schemas` tools (on Ubuntu these come with `gnome-shell` and
+`libglib2.0-bin`):
 
 ```sh
+sudo apt install make gettext libglib2.0-bin
+```
+
+### Build and install
+
+```sh
+git clone https://github.com/authorwerks-dev/ug-usable-desktop-corners-nx.git
+cd ug-usable-desktop-corners-nx
 make install
 ```
 
-You can build a pkg with
+This packs the extension into
+`build/ug-usable-desktop-corners-nx@authorwerks-dev.shell-extension.zip` and
+installs it to `~/.local/share/gnome-shell/extensions/`. `make build` only
+creates the zip.
+
+GNOME 49+ runs on Wayland only, so the shell can't be restarted in place:
+**log out and back in**, then enable it:
 
 ```sh
-make pkg
+gnome-extensions enable ug-usable-desktop-corners-nx@authorwerks-dev
 ```
 
-Don't forget to reload the shell after installing, and to enable the extension.
+(or use the Extensions app). Open the settings with `make test-prefs` or
+`gnome-extensions prefs ug-usable-desktop-corners-nx@authorwerks-dev`.
+
+### Uninstall
+
+```sh
+make remove
+```
 
 ## Customization
 
-GUI preferences should come soon, you can use dconf/gsettings to change extension settings if you want to test them early:
+Most options are in the preferences window. Every setting can also be changed
+with gsettings once the extension is installed:
 
 ```sh
-# you first need to build
-make build
-
-# then change any preference
-gsettings --schemadir=build/schemas set org.gnome.shell.extensions.ug-usable-desktop-corners-nx preference value
+gsettings --schemadir=$HOME/.local/share/gnome-shell/extensions/ug-usable-desktop-corners-nx@authorwerks-dev/schemas \
+    set org.gnome.shell.extensions.ug-usable-desktop-corners-nx preference value
 ```
 
-You can see available preferences in `schemas/org.gnome.shell.extensions.ug-usable-desktop-corners-nx.gschemas.xml`.
+You can see available preferences in `schemas/org.gnome.shell.extensions.ug-usable-desktop-corners-nx.gschema.xml`.
 
 ## Versions support
 
